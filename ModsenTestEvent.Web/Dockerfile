@@ -7,17 +7,20 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ModsenTestEvent/ModsenTestEvent.csproj", "ModsenTestEvent/"]
-RUN dotnet restore "ModsenTestEvent/ModsenTestEvent.csproj"
+COPY ["ModsenTestEvent.Web/ModsenTestEvent.Web.csproj", "ModsenTestEvent.Web/"]
+COPY ["ModsenTestEvent.Domain/ModsenTestEvent.Domain.csproj", "ModsenTestEvent.Domain/"]
+COPY ["ModsenTestEvent.Infrastructure/ModsenTestEvent.Infrastructure.csproj", "ModsenTestEvent.Infrastructure/"]
+COPY ["ModsenTestEvent.Application/ModsenTestEvent.Application.csproj", "ModsenTestEvent.Application/"]
+RUN dotnet restore "ModsenTestEvent.Web/ModsenTestEvent.Web.csproj"
 COPY . .
-WORKDIR "/src/ModsenTestEvent"
-RUN dotnet build "ModsenTestEvent.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/ModsenTestEvent.Web"
+RUN dotnet build "ModsenTestEvent.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ModsenTestEvent.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ModsenTestEvent.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ModsenTestEvent.dll"]
+ENTRYPOINT ["dotnet", "ModsenTestEvent.Web.dll"]

@@ -21,12 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\ModsenTestEvent.Application\ModsenTestEvent.Application.csproj" />
       <ProjectReference Include="..\ModsenTestEvent.Domain\ModsenTestEvent.Domain.csproj" />
       <ProjectReference Include="..\ModsenTestEvent.Infrastructure\ModsenTestEvent.Infrastructure.csproj" />
@@ -34,6 +28,12 @@
 
     <ItemGroup>
       <Folder Include="uploads\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
