@@ -37,7 +37,7 @@ services:
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=testdatabase;Username=postgres;Password=1234
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=testdatabase;Username=postgres;Password=postgres
     depends_on:
       - postgres
 
