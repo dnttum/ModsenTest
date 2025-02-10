@@ -36,5 +36,4 @@ publish/
 *.publishsettings
 *.pfx
 
-# Исключаем README.md из игнорирования (если вдруг добавили его в .gitignore)
-!README.md
+README.md
