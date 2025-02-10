@@ -1,5 +1,40 @@
+# Игнорируем Rider/JetBrains служебные файлы
+.idea/
+*.sln.iml
+
+# Игнорируем временные файлы .NET
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+*.user
+*.suo
+*.userosscache
+*.sln.DotSettings*
+*.vscode/
+
+# Игнорируем кеши, логи и временные файлы
+*.log
+*.tmp
+*.cache
+*.vs/
+
+# Игнорируем зависимости NuGet
+packages/
+project.lock.json
+global.json
+.nuget/
+
+# Игнорируем файлы Rider
+.idea/
+.idea_modules/
+
+# Игнорируем файлы Docker
+.dockerignore
+docker-compose.override.yml
+
+# Игнорируем файлы для отладки и публикации
+publish/
+*.publishsettings
+*.pfx
+
+# Исключаем README.md из игнорирования (если вдруг добавили его в .gitignore)
+!README.md
