@@ -14,7 +14,6 @@ global using ModsenTestEvent.Infrastructure.Middleware;
 global using Microsoft.Extensions.FileProviders;
 global using ModsenTestEvent.Application.Validators;
 global using FluentValidation;
-global using ModsenTestEvent.Web.Extensions;
 
 
 

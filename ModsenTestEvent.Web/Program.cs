@@ -91,7 +91,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-await app.AddMigrations();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+    var retries = 10;
+    while (retries > 0)
+    {
+        try
+        {
+            await dbContext.Database.OpenConnectionAsync();
+            await dbContext.Database.CloseConnectionAsync();
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries--;
+            if (retries == 0)
+            {
+                throw new InvalidOperationException("Unable to connect to the database", ex);
+            }
+            await Task.Delay(1000);
+        }
+        await dbContext.Database.MigrateAsync();
+    }
+}
 
 app.UseExceptionHandler("/error"); 
 app.UseMiddleware<ExceptionHandlingMiddleware>(); 
