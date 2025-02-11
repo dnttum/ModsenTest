@@ -16,7 +16,7 @@ services:
 
   api:
     container_name: modsen-api
-    image: iliyhaaa/modsen-api:latest
+    image: iliyhaaa/api-modsen:latest
     restart: always
     ports:
       - "8080:8080"
