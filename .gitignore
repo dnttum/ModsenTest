@@ -35,5 +35,3 @@ docker-compose.override.yml
 publish/
 *.publishsettings
 *.pfx
-
-README.md
