@@ -1,4 +1,6 @@
-namespace ModsenTestEvent.Infrastructure.Middleware;
+using ModsenTestEvent.Presentation.Middleware.Exceptions;
+
+namespace ModsenTestEvent.Presentation.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
