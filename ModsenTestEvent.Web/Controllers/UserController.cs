@@ -1,46 +1,37 @@
 namespace ModsenTestEvent.Web.Controllers;
 
-[Route("api/UsersAuthorization")]
+[Route("api/users")]
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IUserRepository _repository; 
+    private readonly IUserService _userService;
 
-    public UserController(IUserRepository repository)
+    public UserController(IUserService userService)
     {
-        _repository = repository;
+        _userService = userService;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(LoginRequestDto loginRequestDto, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var loginResponse = await _repository.LoginAsync(loginRequestDto,cancellationToken);
-        
-        return Ok(loginResponse);
-    }
-    
-    [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync(RegistrationRequestDto registrationRequestDto, CancellationToken cancellationToken)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        var user = await _repository.RegisterAsync(registrationRequestDto, cancellationToken);
+        var user = await _userService.LoginAsync(loginRequestDto, cancellationToken);
         
         return Ok(user);
     }
-    
-    [HttpPost("refresh-token")] 
+
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterAsync(RegistrationRequestDto registrationRequestDto, CancellationToken cancellationToken)
+    {
+        var user = await _userService.RegisterAsync(registrationRequestDto, cancellationToken);
+        
+        return Ok(user);
+    }
+
+    [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequestDto request, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        var token = await _userService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
         
-        var response = await _repository.RefreshTokenAsync(request.RefreshToken, cancellationToken);
-
-        return Ok(response);
+        return Ok(token);
     }
 }

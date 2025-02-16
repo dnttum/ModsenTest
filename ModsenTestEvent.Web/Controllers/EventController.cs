@@ -1,24 +1,20 @@
-using ModsenTestEvent.Domain.Models;
-
 namespace ModsenTestEvent.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class EventController : ControllerBase
 {
-    private readonly IEventRepository _eventRepository;
-    private readonly IValidator<IFormFile> _validator;
+    private readonly IEventService _eventService;
 
-    public EventController(IEventRepository eventRepository, IValidator<IFormFile> validator)
+    public EventController(IEventService eventService)
     {
-        _eventRepository = eventRepository;
-        _validator = validator;
+        _eventService = eventService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllAsync([FromQuery] PageParamsDto pageParamsDto, CancellationToken cancellationToken)
     {
-        var events = await _eventRepository.GetAllAsync(pageParamsDto, cancellationToken);
+        var events = await _eventService.GetAllAsync(pageParamsDto, cancellationToken);
         
         return Ok(events);
     }
@@ -26,8 +22,7 @@ public class EventController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(int id)
     {
-        var eventItem = await _eventRepository.GetAsync(id);
-        if (eventItem == null) return NotFound();
+        var eventItem = await _eventService.GetAsync(id);
         
         return Ok(eventItem);
     }
@@ -35,8 +30,7 @@ public class EventController : ControllerBase
     [HttpGet("byname/{name}")] 
     public async Task<IActionResult> GetAsync(string name)
     {
-        var eventItem = await _eventRepository.GetAsync(name);
-        if (eventItem == null) return NotFound();
+        var eventItem = await _eventService.GetAsync(name);
         
         return Ok(eventItem);
     }
@@ -44,9 +38,7 @@ public class EventController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAsync(EventDto eventDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var eventItem = await _eventRepository.CreateAsync(eventDto);
+        var eventItem = await _eventService.CreateAsync(eventDto);
         
         return Ok(eventItem);
     }
@@ -54,12 +46,7 @@ public class EventController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAsync(int id, EventDto eventDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var existingEvent = await _eventRepository.GetAsync(id);
-        if (existingEvent == null) return NotFound();
-        
-        await _eventRepository.UpdateAsync(id, eventDto);
+        await _eventService.UpdateAsync(id, eventDto);
         
         return NoContent();
     }
@@ -67,25 +54,22 @@ public class EventController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEventAsync(int id)
     {
-        var eventItem = await _eventRepository.GetAsync(id);
-        if (eventItem == null) return NotFound();
-        
-        await _eventRepository.DeleteAsync(id);
+        await _eventService.DeleteAsync(id);
         
         return NoContent();
+    }
+
+    [HttpGet("filtered")]
+    public async Task<IActionResult> GetAsync([FromQuery] DateTime? date, [FromQuery] string? location, [FromQuery] string? category)
+    {
+        var events = await _eventService.GetAllAsync(date, location, category);
+        return Ok(events);
     }
 
     [HttpPost("files/{eventId}")] 
     public async Task<IActionResult> UploadImageAsync(int eventId, IFormFile? file)
     {
-        var validationResult = await _validator.ValidateAsync(file);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
-        }
-        
-        await _eventRepository.UploadImageAsync(eventId, file);
+        await _eventService.UploadImageAsync(eventId, file);
         
         return NoContent();
     }

@@ -5,19 +5,17 @@ namespace ModsenTestEvent.Web.Controllers;
 [Authorize(Policy = "ParticipantPolicy")]
 public class ParticipantController : ControllerBase
 {
-    private readonly IParticipantRepository _repository;
+    private readonly IParticipantService _participantService;
 
-    public ParticipantController(IParticipantRepository repository)
+    public ParticipantController(IParticipantService participantService)
     {
-        _repository = repository;
+        _participantService = participantService;
     }
 
     [HttpPost]
     public async Task<IActionResult> RegisterAsync(ParticipantDto participantDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        var participant = await _repository.RegisterAsync(participantDto);
+        var participant = await _participantService.RegisterAsync(participantDto);
         
         return Ok(participant);
     }
@@ -25,7 +23,7 @@ public class ParticipantController : ControllerBase
     [HttpGet("event/{eventId}")]
     public async Task<IActionResult> GetRangeAsync(int eventId)
     {
-        var participants = await _repository.GetRangeAsync(eventId);
+        var participants = await _participantService.GetRangeAsync(eventId);
         
         return Ok(participants);
     }
@@ -33,8 +31,7 @@ public class ParticipantController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync(int id)
     {
-        var participant = await _repository.GetAsync(id);
-        if (participant == null) return NotFound();
+        var participant = await _participantService.GetAsync(id);
         
         return Ok(participant);
     }
@@ -42,10 +39,7 @@ public class ParticipantController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        var participant = await _repository.GetAsync(id);
-        if (participant == null) return NotFound();
-        
-        await _repository.DeleteAsync(id);
+        await _participantService.DeleteAsync(id);
         
         return NoContent();
     }
