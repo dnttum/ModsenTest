@@ -6,6 +6,7 @@ public class EventProfile : Profile
     {
         CreateMap<Event, EventDto>(); 
         
-        CreateMap<EventDto, Event>(); 
+        CreateMap<EventDto, Event>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore()); 
     }
 }
