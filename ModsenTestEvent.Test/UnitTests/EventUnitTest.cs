@@ -26,7 +26,7 @@ public class EventUnitTest
 
         _emailServiceMock = new Mock<IEmailService>();
 
-        _repository = new EventRepository(_context, _mapper, _emailServiceMock.Object);
+        _repository = new EventRepository(_context);
     }
 
     [TearDown]
@@ -46,20 +46,21 @@ public class EventUnitTest
             .RuleFor(e => e.Category, f => f.Commerce.Department())
             .RuleFor(e => e.MaxCount, f => f.Random.Int(10, 200));
 
-        var testEvents = faker.Generate(2);
+        var testEvents = faker.Generate(2);  
         await _context.Events.AddRangeAsync(testEvents);
         await _context.SaveChangesAsync();
 
         var pageParams = new PageParamsDto { Page = 1, PageSize = 10 };
+        
         var events = await _repository.GetAllAsync(pageParams, CancellationToken.None);
-
+        
         events.Should().HaveCount(2, "Должно быть 2 события в базе данных.");
     }
 
     [Test]
     public async Task CreateAsync_ShouldSaveEventToDatabase()
     {
-        var faker = new Faker<EventDto>()
+        var faker = new Faker<Event>()
             .RuleFor(e => e.Name, f => f.Lorem.Sentence())
             .RuleFor(e => e.Description, f => f.Lorem.Paragraph())
             .RuleFor(e => e.DateTime, f => f.Date.Future())
@@ -67,17 +68,17 @@ public class EventUnitTest
             .RuleFor(e => e.Category, f => f.Commerce.Department())
             .RuleFor(e => e.MaxCount, f => f.Random.Int(10, 200));
 
-        var eventDto = faker.Generate();
-
-        var createdEvent = await _repository.CreateAsync(eventDto);
+        var eventItem = faker.Generate();
+        
+        var createdEvent = await _repository.CreateAsync(eventItem);
         var events = await _context.Events.ToListAsync();
-
+        
         events.Should().HaveCount(1, "Должно быть 1 событие в базе данных.");
         events.First().Should().Match<Event>(e =>
-                e.Name == eventDto.Name &&
-                e.Description == eventDto.Description &&
-                e.Location == eventDto.Location &&
-                e.Category == eventDto.Category,
+                e.Name == eventItem.Name &&
+                e.Description == eventItem.Description &&
+                e.Location == eventItem.Location &&
+                e.Category == eventItem.Category,
             "Событие должно быть сохранено с правильными данными.");
     }
 }
