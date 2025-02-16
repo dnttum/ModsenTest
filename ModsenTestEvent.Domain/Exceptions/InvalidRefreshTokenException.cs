@@ -1,3 +1,3 @@
-namespace ModsenTestEvent.Presentation.Middleware.Exceptions;
+namespace ModsenTestEvent.Domain.Exceptions;
 
 public class InvalidRefreshTokenException(string message) : Exception(message);
