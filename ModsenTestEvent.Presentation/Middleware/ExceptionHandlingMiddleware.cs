@@ -1,5 +1,3 @@
-using ModsenTestEvent.Presentation.Middleware.Exceptions;
-
 namespace ModsenTestEvent.Presentation.Middleware;
 
 public class ExceptionHandlingMiddleware
@@ -31,8 +29,25 @@ public class ExceptionHandlingMiddleware
         var response = context.Response;
         response.ContentType = "application/json";
 
-        response.StatusCode = exception switch
+        if (exception is ValidationException validationException)
         {
+            var errors = validationException.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+
+            response.StatusCode = (int)HttpStatusCode.BadRequest; // Код ответа 400
+            var result = JsonSerializer.Serialize(new
+            {
+                error = errors,
+                statusCode = response.StatusCode
+            });
+            return response.WriteAsync(result);
+        }
+        
+        response.StatusCode = exception switch
+        {   
+            FileRequiredException => (int)HttpStatusCode.BadRequest,
+            EmptyFileException => (int)HttpStatusCode.BadRequest,
             NotFoundException => (int)HttpStatusCode.NotFound,
             DuplicateEventException => (int)HttpStatusCode.BadRequest,
             DuplicateUserException => (int)HttpStatusCode.BadRequest,
@@ -41,12 +56,12 @@ public class ExceptionHandlingMiddleware
             _ => (int)HttpStatusCode.InternalServerError
         };
 
-        var result = JsonSerializer.Serialize(new
+        var defaultResult = JsonSerializer.Serialize(new
         {
             error = exception.Message,
             statusCode = response.StatusCode
         });
 
-        return response.WriteAsync(result);
+        return response.WriteAsync(defaultResult);
     }
 }
