@@ -1,51 +1,41 @@
 namespace ModsenTestEvent.Infrastructure.Repositories;
 
-[AutoInterface]
 public class ParticipantRepository : IParticipantRepository
 {
     private readonly DataContext _context;
-    private readonly IMapper _mapper;
 
-    public ParticipantRepository(DataContext context, IMapper mapper)
+    public ParticipantRepository(DataContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
-    public async Task<ParticipantDto> RegisterAsync(ParticipantDto participantDto)
+    public async Task<Participant> RegisterAsync(Participant participant)
     {
-        var participant = _mapper.Map<Participant>(participantDto);
-        
         _context.Participants.Add(participant);
         await _context.SaveChangesAsync();
-        
-        return _mapper.Map<ParticipantDto>(participant);
+
+        return participant;
     }
     
-    public async Task<IEnumerable<ParticipantDto?>> GetRangeAsync(int id)
+    public async Task<IEnumerable<Participant?>> GetRangeAsync(int id)
     {
         var participants = await _context.Participants
             .Where(p => p.EventId == id)
             .ToListAsync();
-        
-        return _mapper.Map<IEnumerable<ParticipantDto?>>(participants);
+
+        return participants;
     }
 
-    public async Task<ParticipantDto?> GetAsync(int id)
+    public async Task<Participant?> GetAsync(int id)
     {
         var participant = await _context.Participants.FindAsync(id);
         
-        return _mapper.Map<ParticipantDto>(participant);
+        return participant;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Participant participant)
     {
-        var participant = await _context.Participants.FindAsync(id);
-
-        if (participant != null)
-        {
-            _context.Participants.Remove(participant);
-            await _context.SaveChangesAsync();
-        }
+        _context.Participants.Remove(participant);
+        await _context.SaveChangesAsync();
     }
 }
