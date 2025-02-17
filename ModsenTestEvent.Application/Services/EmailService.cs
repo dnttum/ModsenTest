@@ -21,7 +21,7 @@ public class EmailService : IEmailService
 
     public async Task SendEmailAsync(int id, Event eventItem)
     {
-        var participants = await _participantService.GetRangeAsync(id); // можно вызвать репозиторий?
+        var participants = await _participantService.GetRangeAsync(id); 
 
         var participantDtos = participants.ToList();
         
