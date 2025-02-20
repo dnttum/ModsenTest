@@ -1,4 +1,4 @@
-namespace ModsenTestEvent.Presentation.Middleware;
+namespace ModsenTestEvent.Web.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
@@ -35,7 +35,7 @@ public class ExceptionHandlingMiddleware
                 .GroupBy(e => e.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
 
-            response.StatusCode = (int)HttpStatusCode.BadRequest; // Код ответа 400
+            response.StatusCode = (int)HttpStatusCode.BadRequest; 
             var result = JsonSerializer.Serialize(new
             {
                 error = errors,
