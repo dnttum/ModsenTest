@@ -1,4 +1,4 @@
-namespace ModsenTestEvent.Application.Services;
+namespace ModsenTestEvent.Infrastructure.Services;
 
 public class FileService : IFileService
 {

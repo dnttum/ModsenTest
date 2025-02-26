@@ -21,12 +21,12 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> IsUsernameUniqueAsync(string username, CancellationToken cancellationToken)
     {
-        return await _context.Users.AnyAsync(u => u.UserName == username, cancellationToken);
+        return !await _context.Users.AnyAsync(u => u.UserName == username, cancellationToken);
     }
     
     public async Task<bool> IsContactsUniqueAsync(string contacts, CancellationToken cancellationToken)
     {
-        return await _context.Users.AnyAsync(u => u.Contacts == contacts, cancellationToken);
+        return !await _context.Users.AnyAsync(u => u.Contacts == contacts, cancellationToken);
     }
 
     public async Task AddAsync(User user, CancellationToken cancellationToken)

@@ -19,6 +19,8 @@ global using System.Net;
 global using System.Text.Json;
 global using ModsenTestEvent.Domain.Exceptions;
 global using ModsenTestEvent.Web.Middleware;
+global using ModsenTestEvent.Infrastructure.Services;
+
 
 
 
