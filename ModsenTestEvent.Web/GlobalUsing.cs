@@ -13,13 +13,16 @@ global using Microsoft.Extensions.FileProviders;
 global using ModsenTestEvent.Application.Validators;
 global using FluentValidation;
 global using ModsenTestEvent.Application.Interfaces;
-global using ModsenTestEvent.Application.Services;
+global using ModsenTestEvent.Application.UseCases.Participant;
+global using ModsenTestEvent.Application.UseCases.User;
 global using ModsenTestEvent.Domain.Interfaces;
 global using System.Net;
 global using System.Text.Json;
 global using ModsenTestEvent.Domain.Exceptions;
 global using ModsenTestEvent.Web.Middleware;
 global using ModsenTestEvent.Infrastructure.Services;
+global using ModsenTestEvent.Application.UseCases.Event;
+
 
 
 

@@ -1,37 +1,45 @@
-namespace ModsenTestEvent.Web.Controllers;
-
-[Route("api/users")]
-[ApiController]
-public class UserController : ControllerBase
+namespace ModsenTestEvent.Web.Controllers
 {
-    private readonly IUserService _userService;
-
-    public UserController(IUserService userService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
-        _userService = userService;
-    }
+        private readonly ILoginUseCase _loginUseCase;
+        private readonly IRegisterUseCase<RegistrationRequestDto, UserDto> _registerUseCase;
+        private readonly IRefreshTokenUseCase _refreshTokenUseCase;
 
-    [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(LoginRequestDto loginRequestDto, CancellationToken cancellationToken)
-    {
-        var user = await _userService.LoginAsync(loginRequestDto, cancellationToken);
-        
-        return Ok(user);
-    }
+        public UserController(
+            ILoginUseCase loginUseCase,
+            IRegisterUseCase<RegistrationRequestDto, UserDto> registerUseCase,
+            IRefreshTokenUseCase refreshTokenUseCase)
+        {
+            _loginUseCase = loginUseCase;
+            _registerUseCase = registerUseCase;
+            _refreshTokenUseCase = refreshTokenUseCase;
+        }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync(RegistrationRequestDto registrationRequestDto, CancellationToken cancellationToken)
-    {
-        var user = await _userService.RegisterAsync(registrationRequestDto, cancellationToken);
-        
-        return Ok(user);
-    }
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginRequestDto, CancellationToken cancellationToken)
+        {
+            var user = await _loginUseCase.ExecuteAsync(loginRequestDto, cancellationToken);
+            
+            return Ok(user);
+        }
 
-    [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequestDto request, CancellationToken cancellationToken)
-    {
-        var token = await _userService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
-        
-        return Ok(token);
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequestDto registrationRequestDto, CancellationToken cancellationToken)
+        {
+            var user = await _registerUseCase.ExecuteAsync(registrationRequestDto, cancellationToken);
+            
+            return Ok(user);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] string refreshToken, CancellationToken cancellationToken)
+        {
+            var token = await _refreshTokenUseCase.ExecuteAsync(refreshToken, cancellationToken);
+            
+            return Ok(token);
+        }
     }
 }

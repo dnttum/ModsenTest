@@ -4,13 +4,28 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(EventProfile), typeof(ParticipantProfile), typeof(UserProfile));
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
-builder.Services.AddScoped<IParticipantService, ParticipantService>();
-builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Create>() 
+    .AddClasses(classes => classes.InNamespaces("ModsenTestEvent.Application.UseCases.Event"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<GetRangeByEventId>()  
+    .AddClasses(classes => classes.InNamespaces("ModsenTestEvent.Application.UseCases.Participant"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Login>()  
+    .AddClasses(classes => classes.InNamespaces("ModsenTestEvent.Application.UseCases.User"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 
 builder.Services.AddValidatorsFromAssemblyContaining<FileValidator>();
 
